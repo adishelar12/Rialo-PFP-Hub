@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rialo PFP Generator</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #111;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .header img {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+  }
+  .profile-card {
+    background: #222;
+    border-radius: 20px;
+    padding: 20px;
+    width: 300px;
+    text-align: center;
+    margin-top: 20px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+    position: relative;
+  }
+  .avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: gray;
+    color: white;
+    font-size: 38px;
+    line-height: 120px;
+    margin: auto;
+    margin-bottom: 10px;
+    font-weight: bold;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  input, button, label, select {
+    width: 260px;
+    margin: 6px;
+    padding: 8px;
+    border-radius: 8px;
+    border: none;
+  }
+  input[type="color"] {
+    padding: 0;
+    height: 40px;
+    cursor: pointer;
+  }
+  button {
+    background: #4e54c8;
+    color: white;
+    cursor: pointer;
+  }
+  #downloadBtn {
+    display: none;
+    margin-top: 10px;
+    background: #1dd1a1;
+  }
+</style>
+</head>
+<body>
+
+<!-- Header with image + title -->
+<div class="header">
+  <img src="https://i.postimg.cc/y8Q3Ct9c/20250927-162901.jpg" alt="Rialo Logo">
+  <h2>Rialo PFP Generator</h2>
+</div>
+
+<input type="text" id="name" placeholder="Enter your name">
+<input type="text" id="bio" placeholder="Enter a short bio">
+<label for="colorPicker">Pick Avatar Color:</label>
+<input type="color" id="colorPicker" value="#4e54c8">
+<label for="shape">Choose Avatar Shape:</label>
+<select id="shape">
+  <option value="50%">Circle</option>
+  <option value="10%">Rounded Square</option>
+  <option value="0%">Square</option>
+</select>
+<label for="uploadPic">Upload Profile Picture:</label>
+<input type="file" id="uploadPic" accept="image/*">
+<button onclick="generateProfile()">Generate Profile</button>
+
+<div class="profile-card" id="profile" style="display:none;">
+  <div class="avatar" id="avatar"></div>
+  <h3 id="displayName"></h3>
+  <p id="displayBio"></p>
+</div>
+
+<button id="downloadBtn" onclick="downloadProfile()">Download Profile</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+function generateProfile() {
+  let name = document.getElementById("name").value.trim();
+  let bio = document.getElementById("bio").value.trim();
+  if(name === "") return;
+
+  let avatarDiv = document.getElementById("avatar");
+  avatarDiv.innerHTML = ""; // reset avatar
+
+  // Set shape
+  avatarDiv.style.borderRadius = document.getElementById("shape").value;
+
+  // Check for uploaded picture
+  let fileInput = document.getElementById("uploadPic");
+  if(fileInput.files && fileInput.files[0]) {
+    let img = document.createElement("img");
+    img.src = URL.createObjectURL(fileInput.files[0]);
+    avatarDiv.appendChild(img);
+  } else {
+    // Generate initials
+    let initials = name.split(" ").map(word => word[0].toUpperCase()).join("");
+    avatarDiv.innerText = initials;
+
+    // Set color
+    let chosenColor = document.getElementById("colorPicker").value;
+    avatarDiv.style.background = chosenColor;
+  }
+
+  // Show profile card
+  document.getElementById("profile").style.display = "block";
+  document.getElementById("displayName").innerText = name;
+  document.getElementById("displayBio").innerText = bio;
+
+  // Show download button
+  document.getElementById("downloadBtn").style.display = "block";
+}
+
+function downloadProfile() {
+  html2canvas(document.getElementById("profile")).then(canvas => {
+    let link = document.createElement("a");
+    link.download = "rialo-profile.png";
+    link.href = canvas.toDataURL();
+    link.click();
+  });
+}
+</script>
+
+</body>
+</html>
